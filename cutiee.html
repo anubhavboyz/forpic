@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Anshika</title>
+  <link rel="shortcut icon" href="https://hbd-2-0.vercel.app/icon.png" type="image/x-icon"/>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: white; /* Background ko White kiya */
+      font-family: Arial, sans-serif;
+      color: black;
+    }
+
+    #drag-container {
+      width: 100vw;
+      height: 100vh;
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #drag-container.grabbing {
+      cursor: grabbing;
+    }
+
+    #spin-container {
+      width: 150px;
+      height: 200px;
+      position: absolute;
+      transform-style: preserve-3d;
+      /* Rotation JavaScript se control hoga */
+    }
+
+    /* Images ki styling */
+    #spin-container img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.2);
+      -webkit-box-reflect: below 1px linear-gradient(transparent, rgba(0, 0, 0, 0.4));
+    }
+
+    /* Happy Birthday Text (Floating, Centered) ki styling */
+    #hbd-text { /* Yeh woh text hai jo float karega */
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      /* Text ko floating, flat aur seedha rakhein.
+         translate(-50%, -50%) se center hota hai.
+         rotateY(180deg) se text seedha hota hai.
+         rotateX(90deg) se flat hota hai.
+         translateY(0) se text center mein aayega (images ke center ke level par).
+         translateZ(1px) se images se halka sa upar aata hai. */
+      transform: translate(-50%, -50%) rotateY(180deg) rotateX(90deg) translateY(0px) translateZ(1px);
+      z-index: 1; /* Images se upar */
+      font-size: 2.5vw; /* Adjusted font size for better fit */
+      max-width: 350px; /* Adjusted max-width */
+      text-align: center;
+      font-weight: bold;
+      font-family: 'Brush Script MT', 'cursive', sans-serif;
+      color: #00bcd4; /* Light Blue color */
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    /* Canvas (fireworks aur hearts) */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="drag-container">
+    <div id="spin-container">
+      <p id="hbd-text">Happy Birthday Anshika</p>
+    </div>
+  </div>
+
+  <audio autoplay loop>
+    <source src="https://api.soundcloud.com/tracks/143041228/stream?client_id=587aa2d384f7333a886010d5f52f302a" type="audio/mpeg">
+  </audio>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const imageUrls = [
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%201.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%202.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%203.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%204.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image5.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image6.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image7.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image8.jpg",
+    ];
+
+    const spinContainer = document.getElementById("spin-container");
+    const total = imageUrls.length;
+    const angleStep = 360 / total;
+    const radius = 280; /* Images ko center se kitna door rakhna hai */
+
+    imageUrls.forEach((url, i) => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.transform = `rotateY(${i * angleStep}deg) translateZ(${radius}px)`;
+      spinContainer.appendChild(img);
+    });
+
+    let startX, startY, currentX = 0, currentY = 0, rotating = true;
+    let autoRotateSpeed = 0.05;
+    let dragSensitivity = 0.4;
+    const dragContainer = document.getElementById("drag-container");
+
+    function rotateScene() {
+      spinContainer.style.transform = `rotateX(${currentY}deg) rotateY(${currentX}deg)`;
+    }
+
+    function autoRotate() {
+      if (rotating) {
+        currentX += autoRotateSpeed;
+      }
+      rotateScene();
+      requestAnimationFrame(autoRotate);
+    }
+
+    autoRotate();
+
+    function onMove(e) {
+      if ((!startX && !startY) || (e.touches && e.touches.length === 0)) return;
+
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+      currentX += (x - startX) * dragSensitivity;
+      currentY -= (y - startY) * dragSensitivity;
+
+      startX = x;
+      startY = y;
+
+      rotateScene();
+    }
+
+    dragContainer.addEventListener("mousedown", (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      rotating = false;
+      dragContainer.classList.add('grabbing');
+    });
+
+    dragContainer.addEventListener("mousemove", onMove);
+
+    dragContainer.addEventListener("mouseup", () => {
+      startX = null;
+      startY = null;
+      rotating = true;
+      dragContainer.classList.remove('grabbing');
+    });
+
+    dragContainer.addEventListener("touchstart", (e) => {
+      if (e.touches.length > 0) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        rotating = false;
+      }
+    });
+
+    dragContainer.addEventListener("touchmove", onMove);
+
+    dragContainer.addEventListener("touchend", () => {
+      startX = null;
+      startY = null;
+      rotating = true;
+    });
+
+    // Canvas (Firework aur Heart effects) ka code jyon ka tyon hai
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function Firework(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = random(1.5, 3);
+      this.color = `hsl(${random(0, 360)}, 100%, 70%)`;
+      this.vx = random(-2.5, 2.5);
+      this.vy = random(-2.5, 2.5);
+      this.life = 80;
+    }
+
+    Firework.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    };
+
+    Firework.prototype.update = function () {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life--;
+    };
+
+    function Heart(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = random(15, 30);
+      this.color = 'rgba(255, 0, 0, 0.7)';
+      this.vy = random(-1.5, -0.5);
+      this.opacity = 1;
+    }
+
+    Heart.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.bezierCurveTo(
+        this.x - this.size / 2,
+        this.y - this.size / 2,
+        this.x - this.size,
+        this.y + this.size / 3,
+        this.x,
+        this.y + this.size
+      );
+      ctx.bezierCurveTo(
+        this.x + this.size,
+        this.y + this.size / 3,
+        this.x + this.size / 2,
+        this.y - this.size / 2,
+        this.x,
+        this.y
+      );
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.opacity;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    Heart.prototype.update = function () {
+      this.y += this.vy;
+      this.opacity -= 0.008;
+    };
+
+    let fireworks = [];
+    let hearts = [];
+
+    function animateCanvasEffects() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (Math.random() < 0.03) {
+        fireworks.push(new Firework(random(0, canvas.width), random(0, canvas.height)));
+      }
+
+      if (Math.random() < 0.015) {
+        hearts.push(new Heart(random(0, canvas.width), canvas.height));
+      }
+
+      fireworks.forEach((f, i) => {
+        f.draw();
+        f.update();
+        if (f.life <= 0) fireworks.splice(i, 1);
+      });
+
+      hearts.forEach((h, i) => {
+        h.draw();
+        h.update();
+        if (h.opacity <= 0) hearts.splice(i, 1);
+      });
+
+      requestAnimationFrame(animateCanvasEffects);
+    }
+
+    animateCanvasEffects();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
