@@ -9,11 +9,10 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: white; /* Background ko White kiya */
+      background: white;
       font-family: Arial, sans-serif;
       color: black;
     }
-
     #drag-container {
       width: 100vw;
       height: 100vh;
@@ -25,20 +24,15 @@
       touch-action: none;
       cursor: grab;
     }
-
     #drag-container.grabbing {
       cursor: grabbing;
     }
-
     #spin-container {
       width: 150px;
       height: 200px;
       position: absolute;
       transform-style: preserve-3d;
-      /* Rotation JavaScript se control hoga */
     }
-
-    /* Images ki styling */
     #spin-container img {
       position: absolute;
       left: 0;
@@ -50,33 +44,23 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.2);
       -webkit-box-reflect: below 1px linear-gradient(transparent, rgba(0, 0, 0, 0.4));
     }
-
-    /* Happy Birthday Text (Floating, Centered) ki styling */
-    #hbd-text { /* Yeh woh text hai jo float karega */
+    #hbd-text {
       position: absolute;
       top: 100%;
       left: 50%;
-      /* Text ko floating, flat aur seedha rakhein.
-         translate(-50%, -50%) se center hota hai.
-         rotateY(180deg) se text seedha hota hai.
-         rotateX(90deg) se flat hota hai.
-         translateY(0) se text center mein aayega (images ke center ke level par).
-         translateZ(1px) se images se halka sa upar aata hai. */
       transform: translate(-50%, -50%) rotateY(180deg) rotateX(90deg) translateY(0px) translateZ(1px);
-      z-index: 1; /* Images se upar */
-      font-size: 2.5vw; /* Adjusted font size for better fit */
-      max-width: 350px; /* Adjusted max-width */
+      z-index: 1;
+      font-size: 2.5vw;
+      max-width: 350px;
       text-align: center;
       font-weight: bold;
       font-family: 'Brush Script MT', 'cursive', sans-serif;
-      color: #00bcd4; /* Light Blue color */
+      color: #00bcd4;
       text-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 0, 0, 0.2);
       pointer-events: none;
       white-space: nowrap;
       user-select: none;
     }
-
-    /* Canvas (fireworks aur hearts) */
     canvas {
       position: fixed;
       top: 0;
@@ -104,13 +88,13 @@
       "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%201.jpg",
       "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%202.jpg",
       "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%203.jpg",
-      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%204.jpg",
+      "https://raw.githubusercontent.com/anubhavboyz/forpic/main/image%204.jpg"
     ];
 
     const spinContainer = document.getElementById("spin-container");
     const total = imageUrls.length;
     const angleStep = 360 / total;
-    const radius = 280; /* Images ko center se kitna door rakhna hai */
+    const radius = 280;
 
     imageUrls.forEach((url, i) => {
       const img = document.createElement("img");
@@ -185,7 +169,6 @@
       rotating = true;
     });
 
-    // Canvas (Firework aur Heart effects) ka code jyon ka tyon hai
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
